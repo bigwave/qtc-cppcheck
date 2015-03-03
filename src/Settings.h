@@ -43,6 +43,9 @@ namespace QtcCppcheck {
         QString customParameters() const;
         void setCustomParameters(const QString &customParameters);
 
+        QString fileTypes() const;
+        void setFileTypes(const QString &fileTypes);
+
         bool showBinaryOutput() const;
         void setShowBinaryOutput(bool showBinaryOutput);
 
@@ -63,6 +66,7 @@ namespace QtcCppcheck {
         bool checkUnused_;
         bool checkInconclusive_;
         QString customParameters_;
+        QString fileTypes_;
         bool showBinaryOutput_;
 
         bool popupOnError_;

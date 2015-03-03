@@ -34,6 +34,7 @@ void Settings::save()
   settings.setValue (QLatin1String (SETTINGS_CHECK_UNUSED), checkUnused_);
   settings.setValue (QLatin1String (SETTINGS_CHECK_INCONCLUSIVE), checkInconclusive_);
   settings.setValue (QLatin1String (SETTINGS_CUSTOM_PARAMS), customParameters_);
+  settings.setValue (QLatin1String (SETTINGS_FILE_TYPES), fileTypes_);
   settings.setValue (QLatin1String (SETTINGS_SHOW_OUTPUT), showBinaryOutput_);
   settings.setValue (QLatin1String (SETTINGS_POPUP_ON_ERROR), popupOnError_);
   settings.setValue (QLatin1String (SETTINGS_POPUP_ON_WARNING), popupOnWarning_);
@@ -60,6 +61,8 @@ void Settings::load()
   checkInconclusive_ = settings.value (QLatin1String (SETTINGS_CHECK_INCONCLUSIVE),
                                        false).toBool ();
   customParameters_ = settings.value (QLatin1String (SETTINGS_CUSTOM_PARAMS),
+                                      QString ()).toString ();
+  fileTypes_ = settings.value (QLatin1String (SETTINGS_FILE_TYPES),
                                       QString ()).toString ();
   showBinaryOutput_ = settings.value (QLatin1String (SETTINGS_SHOW_OUTPUT),
                                       false).toBool ();
@@ -108,6 +111,17 @@ QString Settings::customParameters() const
 void Settings::setCustomParameters(const QString &customParameters)
 {
   customParameters_ = customParameters;
+}
+
+QString Settings::fileTypes() const
+{
+  return fileTypes_;
+}
+
+void Settings::setFileTypes(const QString &fileTypes)
+{
+
+  fileTypes_ = fileTypes;
 }
 
 bool Settings::showBinaryOutput() const

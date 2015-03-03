@@ -87,7 +87,31 @@ void CppcheckRunner::updateSettings()
 void CppcheckRunner::checkFiles(const QStringList &fileNames)
 {
   Q_ASSERT (!fileNames.isEmpty ());
-  fileCheckQueue_ += fileNames;
+
+  if (settings_->fileTypes ().trimmed () > QLatin1String(""))
+  {
+    QStringList fileTypes = settings_->fileTypes ().split (QLatin1Char (';'), QString::SkipEmptyParts);
+    QStringList trimmedfileTypes = fileTypes.replaceInStrings (QLatin1String(" "),QLatin1String(""));
+    QStringList regex;
+    regex.append (QLatin1String("^.*\\.("));
+    regex.append (trimmedfileTypes.join (QLatin1String("|")));
+    regex.append (QLatin1String(")$"));
+
+    QString regularExpression = regex.join (QLatin1String(""));
+
+    Core::MessageManager::write (QLatin1String("Filtering on File Types:"), Core::MessageManager::Silent);
+    foreach (QString fileType, trimmedfileTypes)
+    {
+      Core::MessageManager::write (fileType, Core::MessageManager::Silent);
+    }
+
+    fileCheckQueue_ = fileNames.filter( QRegExp (regularExpression));
+  }
+  else
+  {
+    fileCheckQueue_ += fileNames;
+  }
+
   fileCheckQueue_.removeDuplicates ();
   fileCheckQueue_.sort ();
   if (process_.isOpen ())
@@ -129,6 +153,20 @@ void CppcheckRunner::checkQueuedFiles()
   currentlyCheckingFiles_ = fileCheckQueue_;
   fileCheckQueue_.clear ();
   emit startedChecking (currentlyCheckingFiles_);
+  
+  if (showOutput_)
+  {
+    QLatin1String aSpace (" ");
+    QString commandLine (binary);
+    foreach(QString anArgument, arguments)
+    {
+      commandLine.append(aSpace);
+      commandLine.append(anArgument);
+    }
+
+    Core::MessageManager::write (commandLine, Core::MessageManager::Silent);
+  }
+
   process_.start (binary, arguments);
 }
 
